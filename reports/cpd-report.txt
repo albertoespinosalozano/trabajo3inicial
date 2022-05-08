@@ -1,0 +1,230 @@
+Found a 72 line (290 tokens) duplication in the following files: 
+Starting at line 38 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_1.java
+Starting at line 26 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_2.java
+
+	}
+
+	@DisplayName("Aniade una entrada con un tipo no valido")
+	@Test
+	void test_1_1() {
+		assertThrows(EmsExceptions.EmsInvalidTypeException.class, () -> {
+			contactosCovid.loadData(
+					"PERSONAS;12121212R;Jessica;Diaz;jessica.diaz@ems.com;La calle de Jessica, 33;28033;25/01/1980",
+					false);
+		});
+		assertThrows(EmsExceptions.EmsInvalidTypeException.class, () -> {
+			contactosCovid.loadData("LOCALIZACIONA;12121212R;25/10/2021;23:41;41.3870;2.1698\n", false);
+		});
+	}
+
+	@DisplayName("Aniade una persona con número de datos no válidos")
+	@Test
+	void test_1_2() {
+		assertThrows(EmsExceptions.EmsInvalidNumberOfDataException.class, () -> {
+			contactosCovid.loadData(
+					"PERSONA;12121212R;Jessica;Diaz;jessica.diaz@ems.com;La calle de Jessica, 33;28033;25/01/1980;extra de Jessica\n",
+					false);
+		});
+	}
+
+	@DisplayName("Aniade localizacion con número de datos no validos")
+	@Test
+	void test_1_3() {
+		assertThrows(EmsExceptions.EmsInvalidNumberOfDataException.class, () -> {
+			contactosCovid.loadData("LOCALIZACION;extra de localizacion;12121212R;29/10/2020;13:41;41.3870;2.1698\n",
+					false);
+		});
+	}
+
+	@DisplayName("Aniade persona que ya existe")
+	@Test
+	void test_1_5() {
+
+		assertThrows(EmsExceptions.EmsDuplicatePersonException.class, () -> {
+			contactosCovid.loadData(
+					"PERSONA;98765432J;Angel;Panizo;angel.panizo@ems.com;La calle de Angel, 46;28871;12/01/1995\n",
+					false);
+		});
+	}
+
+	@DisplayName("Aniade localización que ya existe")
+	@Test
+	void test_1_6() {
+		assertThrows(EmsExceptions.EmsDuplicateLocationException.class, () -> {
+			contactosCovid.loadData("LOCALIZACION;12121212R;25/10/2021;23:55;91.3971;12.1699\n", false);
+		});
+	}
+
+	@DisplayName("Aniade persona valida")
+	@Test
+	void test_1_7() throws EmsExceptions.EmsPersonNotFoundException {
+		try {
+			contactosCovid.loadData(
+					"PERSONA;12345678J;Juan Manuel;Garitagoitia;juanmanuel.garitagoitia@ems.com;La calle de Juanma, 225;28005;13/01/1972\n",
+					false);
+			Assertions.assertEquals(contactosCovid.findPersona("12345678J"), 3);
+		} catch (EmsExceptions.EmsInvalidTypeException | EmsExceptions.EmsInvalidNumberOfDataException | EmsExceptions.EmsDuplicatePersonException
+				| EmsExceptions.EmsDuplicateLocationException e) {
+			System.out.println("Error al cargar una persona valida");
+		}
+	}
+
+	@DisplayName("Aniade localización valida")
+	@Test
+	void test_1_8() throws EmsExceptions.EmsLocalizationNotFoundException {
+		try {
+			contactosCovid.loadData("LOCALIZACION;12345678J;16/05/2021;01:45;54.3890;28.1698\n", false);
+=====================================================================
+Found a 57 line (290 tokens) duplication in the following files: 
+Starting at line 113 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_1.java
+Starting at line 98 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_2.java
+
+			localization.put("hora", "01:45");
+			Assertions.assertEquals(contactosCovid.findLocalizacion(localization), 5);
+		} catch (EmsExceptions.EmsInvalidTypeException | EmsExceptions.EmsInvalidNumberOfDataException | EmsExceptions.EmsDuplicatePersonException
+				| EmsExceptions.EmsDuplicateLocationException e) {
+			System.out.println("Error al cargar una localizacion valida");
+		}
+	}
+
+	@DisplayName("Busca una persona que existe")
+	@Test
+	void test_1_9() throws EmsExceptions.EmsPersonNotFoundException {
+		assertEquals(contactosCovid.findPersona("12121212R"), 1);
+
+	}
+
+	@DisplayName("Busca una persona que no existe")
+	@Test
+	void test_1_10() throws EmsExceptions.EmsPersonNotFoundException {
+		assertThrows(EmsExceptions.EmsPersonNotFoundException.class, () -> {
+			assertEquals(contactosCovid.findPersona("00000000A"), -1);
+		});
+
+	}
+
+	@DisplayName("Obtiene localizaciones de una persona")
+	@Test
+	void test_1_11() throws EmsExceptions.EmsPersonNotFoundException {
+		try {
+			assertEquals(contactosCovid.localizacionPersona("12121212R").size(), 3);
+		} catch (EmsExceptions.EmsPersonNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@DisplayName("Obtiene localizaciones de una persona que no existe")
+	@Test
+	void test_1_12() throws EmsExceptions.EmsPersonNotFoundException {
+		assertThrows(EmsExceptions.EmsPersonNotFoundException.class, () -> {
+			assertEquals(contactosCovid.localizacionPersona("00000000A").size(), 3);
+		});
+	}
+
+	@DisplayName("Elimina una persona que no existe")
+	@Test
+	void test_1_13() throws EmsExceptions.EmsPersonNotFoundException {
+		assertThrows(EmsExceptions.EmsPersonNotFoundException.class, () -> {
+			contactosCovid.delPersona("00000000A");
+		});
+	}
+
+	@DisplayName("Elimina una persona que existe")
+	@Test
+	void test_1_14() throws EmsExceptions.EmsPersonNotFoundException {
+		contactosCovid.delPersona("98765432J");
+		assertEquals(contactosCovid.getPoblacion().getLista().size(), 1);
+	}
+}
+=====================================================================
+Found a 4 line (88 tokens) duplication in the following files: 
+Starting at line 89 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 106 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+
+	void test_10 () throws EmsExceptions.EmsInvalidTypeException, EmsExceptions.EmsInvalidNumberOfDataException, EmsExceptions.EmsDuplicatePersonException, EmsExceptions.EmsDuplicateLocationException {
+		FechaHora ini = new FechaHora(Utilidades.mapFecha(25, 5, 2021), Utilidades.mapHora(16, 36));
+		FechaHora fin = new FechaHora(Utilidades.mapFecha(25, 5, 2021), Utilidades.mapHora(16, 36));
+		assertEquals(contactosCovid.getListaContactos().numNodosCoordenadaEntreDosInstantes(ini,fin), 3);		
+=====================================================================
+Found a 4 line (79 tokens) duplication in the following files: 
+Starting at line 81 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 89 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 106 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+
+	void test_9 () throws EmsExceptions.EmsInvalidTypeException, EmsExceptions.EmsInvalidNumberOfDataException, EmsExceptions.EmsDuplicatePersonException, EmsExceptions.EmsDuplicateLocationException {
+		FechaHora ini = new FechaHora(Utilidades.mapFecha(25, 5, 2021), Utilidades.mapHora(16, 36));
+		FechaHora fin = new FechaHora(Utilidades.mapFecha(25, 5, 2021), Utilidades.mapHora(16, 36));
+		assertEquals(contactosCovid.getListaContactos().numPersonasEntreDosInstantes(ini,fin), 4);		
+=====================================================================
+Found a 3 line (66 tokens) duplication in the following files: 
+Starting at line 73 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 97 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+
+	void test_8 () throws EmsExceptions.EmsInvalidTypeException, EmsExceptions.EmsInvalidNumberOfDataException, EmsExceptions.EmsDuplicatePersonException, EmsExceptions.EmsDuplicateLocationException {
+		FechaHora ini = new FechaHora(Utilidades.mapFecha(25, 5, 2021), Utilidades.mapHora(16, 30));
+		FechaHora fin = new FechaHora(Utilidades.mapFecha(25, 5, 2021), Utilidades.mapHora(16, 30));
+=====================================================================
+Found a 5 line (42 tokens) duplication in the following files: 
+Starting at line 109 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_1.java
+Starting at line 94 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_2.java
+
+			contactosCovid.loadData("LOCALIZACION;12345678J;16/05/2021;01:45;54.3890;28.1698\n", false);
+			Map<String,Object> localization = new HashMap<String,Object>();
+			localization.put("documento","12345678J");
+			localization.put("fecha","16/05/2021");
+			localization.put("hora", "01:45");
+=====================================================================
+Found a 2 line (42 tokens) duplication in the following files: 
+Starting at line 73 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 81 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 89 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 97 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 106 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+
+	void test_8 () throws EmsExceptions.EmsInvalidTypeException, EmsExceptions.EmsInvalidNumberOfDataException, EmsExceptions.EmsDuplicatePersonException, EmsExceptions.EmsDuplicateLocationException {
+		FechaHora ini = new FechaHora(Utilidades.mapFecha(25, 5, 2021), Utilidades.mapHora(16, 30));
+=====================================================================
+Found a 8 line (36 tokens) duplication in the following files: 
+Starting at line 76 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\main\java\com\practica\ems\covid\Localizacion.java
+Starting at line 64 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\main\java\com\practica\ems\covid\Poblacion.java
+
+	void printLocalizacion() {    
+		System.out.printf(this.toString());
+	}
+	
+	@Override
+	public String toString() {
+		String cadena = "";
+		for(int i = 0; i < this.lista.size(); i++) {
+=====================================================================
+Found a 7 line (35 tokens) duplication in the following files: 
+Starting at line 53 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\main\java\com\practica\genericas\Coordenada.java
+Starting at line 42 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\main\java\com\practica\genericas\FechaHora.java
+
+		result = prime * result + Float.floatToIntBits(longitud);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if((obj != null) && (getClass() == obj.getClass())) {
+=====================================================================
+Found a 4 line (28 tokens) duplication in the following files: 
+Starting at line 98 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_1.java
+Starting at line 114 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_1.java
+Starting at line 83 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_2.java
+Starting at line 99 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_2.java
+
+			Assertions.assertEquals(contactosCovid.findPersona("12345678J"), 3);
+		} catch (EmsExceptions.EmsInvalidTypeException | EmsExceptions.EmsInvalidNumberOfDataException | EmsExceptions.EmsDuplicatePersonException
+				| EmsExceptions.EmsDuplicateLocationException e) {
+			System.out.println("Error al cargar una persona valida");
+=====================================================================
+Found a 2 line (25 tokens) duplication in the following files: 
+Starting at line 74 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 82 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 90 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+Starting at line 107 of C:\Users\Sr.Ark\Documents\eclipse-workspace\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08\src\test\java\com\practica\ems\Test_3.java
+
+		FechaHora ini = new FechaHora(Utilidades.mapFecha(25, 5, 2021), Utilidades.mapHora(16, 30));
+		FechaHora fin = new FechaHora(Utilidades.mapFecha(25, 5, 2021), Utilidades.mapHora(16, 30));
